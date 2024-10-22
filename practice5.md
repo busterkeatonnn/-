@@ -164,43 +164,272 @@ func main() {
 6. **Обратные числа**  
    Напишите программу, которая принимает целое число и выводит его в обратном порядке. Например, для числа 12345 программа должна вывести 54321. Используйте цикл для обработки цифр числа.
 ```go
+package main
+
+import "fmt"
+
+func main() {
+ var number int
+ fmt.Print("Введите целое число: ")
+fmt.Scan(&number)
+
+ // Переменная для хранения обратного числа
+ reversedNumber := 0
+
+ // Цикл для обработки цифр числа
+ for number != 0 {
+  remainder := number % 10            // Получаем последнюю цифру
+  reversedNumber = reversedNumber*10 + remainder // Собираем обратное число
+  number /= 10                        // Удаляем последнюю цифру
+  fmt.Println("Собираем обратное число:", reversedNumber)
+ }
+
+ fmt.Println("Обратное число:", reversedNumber)
+}
 
 ```
 
 7. **Треугольник Паскаля**  
    Напишите программу, которая выводит треугольник Паскаля до заданного уровня. Для этого используйте цикл и массивы для хранения предыдущих значений строки треугольника.
 ```go
+package main
+
+import "fmt"
+
+func main() {
+ var level int
+
+ // Запрос уровня треугольника Паскаля
+ fmt.Print("Введите уровень треугольника Паскаля: ")
+ fmt.Scan(&level)
+
+ // Создание двумерного среза для хранения значений
+ triangle := make([][]int, level)
+
+ // Заполнение треугольника Паскаля
+ for i := 0; i < level; i++ {
+  triangle[i] = make([]int, i+1)
+  triangle[i][0] = 1 // Первая единица в каждой строке
+  triangle[i][i] = 1 // Последняя единица в каждой строке
+
+  // Заполнение значений внутри строки
+  for j := 1; j < i; j++ {
+   triangle[i][j] = triangle[i-1][j-1] + triangle[i-1][j]
+  }
+ }
+
+ // Вывод треугольника Паскаля
+ for i := 0; i < level; i++ {
+  // Отступ для центрирования
+  for k := level - i; k > 0; k-- {
+   fmt.Print(" ")
+  }
+  for j := 0; j <= i; j++ {
+   fmt.Print(triangle[i][j], " ")
+  }
+  fmt.Println()
+ }
+}
 
 ```
 
 8. **Число палиндром**  
    Напишите программу, которая проверяет, является ли число палиндромом (одинаково читается слева направо и справа налево). Не используйте строки для решения этой задачи — работайте только с числами.
 ```go
+package main
 
+import "fmt"
+
+func isPalindrome(num int) bool {
+ if num < 0 {
+  return false // Отрицательные числа != палиндромы
+ }
+
+ reversed := 0
+ originalNum := num
+
+ for num > 0 {
+  remainder := num % 10
+  reversed = reversed*10 + remainder
+  num /= 10
+ }
+
+ return originalNum == reversed
+}
+
+func main() {
+ var num int
+ fmt.Println("Введите число:")
+ fmt.Scan(&num)
+
+ if isPalindrome(num) {
+  fmt.Printf("%d является палиндромом", num)
+ } else {
+  fmt.Printf("%d не является палиндромом", num)
+ }
+}
 ```
 
 9. **Нахождение максимума и минимума в массиве**  
    Напишите функцию, которая принимает массив целых чисел и возвращает одновременно максимальный и минимальный элемент с использованием одного прохода по массиву.
 ```go
+package main
 
+import "fmt"
+
+// MinMax принимает массив целых чисел и возвращает минимальный и максимальный элементы.
+func MinMax(arr []int) (min int, max int) {
+    
+ min = arr[0]
+ max = arr[0]
+
+ for _, value := range arr { // индекс нам не нужен
+  if value < min {
+   min = value
+  }
+  if value > max {
+   max = value
+  }
+ }
+
+ return min, max
+}
+
+func main() {
+ arr := []int{3, 5, 1, 8, -2, 7}
+ min, max := MinMax(arr)
+ fmt.Printf("Минимальный элемент: %d, Максимальный элемент: %d", min, max)
+}
 ```
 
 10. **Игра "Угадай число"**  
    Напишите программу, которая загадывает случайное число от 1 до 100, а пользователь пытается его угадать. Программа должна давать подсказки "больше" или "меньше" после каждой попытки. Реализуйте ограничение на количество попыток.
 ```go
+package main
 
+import (
+ "fmt"
+ "math/rand"
+ "time"
+)
+
+func main() {
+ // Инициализируем генератор случайных чисел
+ rand.Seed(time.Now().UnixNano())
+ randomNumber := rand.Intn(100) + 1 // Случайное число от 1 до 100
+ attempts := 10                       // Максимальное количество попыток
+
+ fmt.Println("Я загадал число от 1 до 100.")
+ fmt.Println("У вас есть 10 попыток, чтобы его угадать.")
+
+ for attempts > 0 {
+  var userGuess int
+
+  fmt.Print("Введите ваше предположение: ")
+  fmt.Scan(&userGuess)
+
+  if userGuess < 1 || userGuess > 100 {
+   fmt.Println("Пожалуйста, введите число от 1 до 100.")
+   continue
+  }
+
+  if userGuess < randomNumber {
+   fmt.Println("Слишком мало! Попробуйте еще раз.")
+  } else if userGuess > randomNumber {
+   fmt.Println("Слишком много! Попробуйте еще раз.")
+  } else {
+   fmt.Printf("Поздравляю! Вы угадали загаданное число %d", randomNumber)
+   return
+  }
+
+  attempts--
+  fmt.Printf("У вас осталось %d попыток \n", attempts)
+
+  if attempts == 0 {
+   fmt.Printf("К сожалению, у вас закончились попытки. Загаданное число было %d", randomNumber)
+  }
+ }
+}
 ```
 
 11. **Числа Армстронга**  
    Напишите программу, которая проверяет, является ли число числом Армстронга (число равно сумме своих цифр, возведённых в степень, равную количеству цифр числа). Например, 153 = 1³ + 5³ + 3³.
 ```go
+package main
 
+import (
+ "fmt"
+ "math"
+)
+
+// isArmstrong проверяет, является ли число num числом Армстронга.
+func isArmstrong(num int) bool {
+ // Преобразуем число в строку, чтобы посчитать количество цифр.
+ strNum := fmt.Sprintf("%d", num)
+ numDigits := len(strNum)
+
+ sum := 0
+ for _, digit := range strNum {
+  // Преобразуем символ цифры обратно в число.
+  d := int(digit - '0')
+  // Добавляем цифру, возведенную в степень количества цифр.
+  sum += int(math.Pow(float64(d), float64(numDigits)))
+ }
+
+ // Проверяем, равно ли число сумме его цифр, возведённых в степень.
+ return sum == num
+}
+
+func main() {
+ var number int
+ fmt.Print("Введите число: ")
+ fmt.Scan(&number)
+
+ if isArmstrong(number) {
+  fmt.Printf("%d является числом Армстронга \n", number)
+ } else {
+  fmt.Printf("%d не является числом Армстронга \n", number)
+ }
+}
 ```
 
 12. **Подсчет слов в строке**  
    Напишите программу, которая принимает строку и выводит количество уникальных слов в ней. Используйте `map` для хранения слов и их количества.
 ```go
+package main
 
+import (
+ "bufio"
+ "fmt"
+ "os"
+ "strings"
+)
+
+func main() {
+ // Создаем сканер для считывания ввода
+ scanner := bufio.NewScanner(os.Stdin)
+ fmt.Println("Введите строку:")
+
+ // Читаем строку
+ if scanner.Scan() {
+  input := scanner.Text()
+
+  // Разбиваем строку на слова
+  words := strings.Fields(input)
+
+  // Используем map для подсчета уникальных слов
+  wordCount := make(map[string]int)
+
+  for _, word := range words {
+   wordCount[word]++
+  }
+
+  // Выводим количество уникальных слов
+  fmt.Printf("Количество уникальных слов: %d", len(wordCount))
+ } else {
+  fmt.Println("Ошибка считывания ввода.")
+ }
+}
 ```
 
 13. **Игра "Жизнь" (Conway's Game of Life)**  
